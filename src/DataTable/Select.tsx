@@ -54,13 +54,14 @@ const SelectWrapper = styled.div`
 
 type SelectProps = {
 	onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-	defaultValue: string | number;
+	defaultValue?: string | number;
+	value?: string | number;
 	children: React.ReactNode;
 };
 
-const Select = ({ defaultValue, onChange, ...rest }: SelectProps): JSX.Element => (
+const Select = ({ defaultValue, value, onChange, ...rest }: SelectProps): JSX.Element => (
 	<SelectWrapper>
-		<SelectControl onChange={onChange} defaultValue={defaultValue} {...rest} />
+		<SelectControl onChange={onChange} value={value} defaultValue={defaultValue} {...rest} />
 		<DropDownIcon />
 	</SelectWrapper>
 );

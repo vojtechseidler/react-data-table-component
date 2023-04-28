@@ -986,9 +986,9 @@ const SelectWrapper = styled__default["default"].div `
 	}
 `;
 const Select = (_a) => {
-    var { defaultValue, onChange } = _a, rest = __rest(_a, ["defaultValue", "onChange"]);
+    var { defaultValue, value, onChange } = _a, rest = __rest(_a, ["defaultValue", "value", "onChange"]);
     return (React__namespace.createElement(SelectWrapper, null,
-        React__namespace.createElement(SelectControl, Object.assign({ onChange: onChange, defaultValue: defaultValue }, rest)),
+        React__namespace.createElement(SelectControl, Object.assign({ onChange: onChange, value: value, defaultValue: defaultValue }, rest)),
         React__namespace.createElement(DropdownIcon, null)));
 };
 
@@ -1200,7 +1200,7 @@ function Pagination({ rowsPerPage, rowCount, currentPage, direction = defaultPro
     if (options.selectAllRowsItem) {
         selectOptions.push(React__namespace.createElement("option", { key: -1, value: rowCount }, options.selectAllRowsItemText));
     }
-    const select = (React__namespace.createElement(Select, { onChange: handleRowsPerPage, defaultValue: rowsPerPage, "aria-label": options.rowsPerPageText }, selectOptions));
+    const select = (React__namespace.createElement(Select, { onChange: handleRowsPerPage, value: rowsPerPage, "aria-label": options.rowsPerPageText }, selectOptions));
     return (React__namespace.createElement(PaginationWrapper, { className: "rdt_Pagination" },
         !options.noRowsPerPage && shouldShow && (React__namespace.createElement(React__namespace.Fragment, null,
             React__namespace.createElement(RowLabel, null, options.rowsPerPageText),
@@ -1767,6 +1767,9 @@ function DataTable(props) {
             });
         }
     }, [defaultSortFieldId, defaultSortDirection]);
+    React__namespace.useEffect(() => {
+        handleChangeRowsPerPage(paginationPerPage);
+    }, [paginationPerPage]);
     const handleSort = React__namespace.useCallback((action) => {
         dispatch(action);
     }, []);

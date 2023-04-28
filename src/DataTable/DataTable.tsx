@@ -202,7 +202,13 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 					(pagination && paginationServer && !persistSelectedOnSort) || sortServer || selectableRowsVisibleOnly,
 			});
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [defaultSortFieldId, defaultSortDirection]);
+
+	React.useEffect(() => {
+		handleChangeRowsPerPage(paginationPerPage);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [paginationPerPage]);
 
 	const handleSort = React.useCallback((action: SortAction<T>) => {
 		dispatch(action);

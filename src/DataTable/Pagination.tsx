@@ -135,7 +135,7 @@ function Pagination({
 	}
 
 	const select = (
-		<Select onChange={handleRowsPerPage} defaultValue={rowsPerPage} aria-label={options.rowsPerPageText}>
+		<Select onChange={handleRowsPerPage} value={rowsPerPage} aria-label={options.rowsPerPageText}>
 			{selectOptions}
 		</Select>
 	);
