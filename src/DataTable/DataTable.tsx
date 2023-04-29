@@ -431,6 +431,7 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 											onSort={action => {
 												handleSort(action);
 												if (typeof props.onValuesChange === 'function') {
+													console.log("SORT CHANGE");
 													props.onValuesChange({
 														page: 1,
 														perPage: rowsPerPage,

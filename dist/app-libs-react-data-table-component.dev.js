@@ -1886,6 +1886,7 @@ function DataTable(props) {
                                     var _a;
                                     handleSort(action);
                                     if (typeof props.onValuesChange === 'function') {
+                                        console.log("SORT CHANGE");
                                         props.onValuesChange({
                                             page: 1,
                                             perPage: rowsPerPage,
