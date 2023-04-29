@@ -1,5 +1,6 @@
 import { Alignment, Direction, Media } from './constants';
 import { CSSObject } from 'styled-components';
+import { SortDirection } from "@material-ui/core";
 
 export enum SortOrder {
 	ASC = 'asc',
@@ -27,6 +28,13 @@ export type PaginationComponentProps = {
 	onChangeRowsPerPage: PaginationChangeRowsPerPage;
 };
 export type PaginationComponent = React.ComponentType<PaginationComponentProps>;
+
+export type ValuesChange = {
+	page: number;
+	perPage: number;
+	orderingFieldId?: string;
+	orderingDirection: SortDirection;
+};
 
 export type TableProps<T> = {
 	actions?: React.ReactNode | React.ReactNode[];
@@ -114,6 +122,8 @@ export type TableProps<T> = {
 	 *  Shows and displays a header with a title
 	 *  */
 	title?: string | React.ReactNode;
+
+	onValuesChange?: (values: ValuesChange) => void;
 };
 
 export type TableColumnBase = {

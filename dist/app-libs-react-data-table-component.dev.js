@@ -1278,7 +1278,7 @@ function getMergeFunction(key, options) {
 function getEnumerableOwnPropertySymbols(target) {
 	return Object.getOwnPropertySymbols
 		? Object.getOwnPropertySymbols(target).filter(function(symbol) {
-			return Object.propertyIsEnumerable.call(target, symbol)
+			return target.propertyIsEnumerable(symbol)
 		})
 		: []
 }
@@ -1783,13 +1783,15 @@ function DataTable(props) {
     const handleRowDoubleClicked = React__namespace.useCallback((row, e) => onRowDoubleClicked(row, e), [onRowDoubleClicked]);
     const handleRowMouseEnter = React__namespace.useCallback((row, e) => onRowMouseEnter(row, e), [onRowMouseEnter]);
     const handleRowMouseLeave = React__namespace.useCallback((row, e) => onRowMouseLeave(row, e), [onRowMouseLeave]);
-    const handleChangePage = React__namespace.useCallback((page) => dispatch({
-        type: 'CHANGE_PAGE',
-        page,
-        paginationServer,
-        visibleOnly: selectableRowsVisibleOnly,
-        persistSelectedOnPageChange,
-    }), [paginationServer, persistSelectedOnPageChange, selectableRowsVisibleOnly]);
+    const handleChangePage = React__namespace.useCallback((page) => {
+        dispatch({
+            type: 'CHANGE_PAGE',
+            page,
+            paginationServer,
+            visibleOnly: selectableRowsVisibleOnly,
+            persistSelectedOnPageChange,
+        });
+    }, [paginationServer, persistSelectedOnPageChange, selectableRowsVisibleOnly]);
     const handleChangeRowsPerPage = React__namespace.useCallback((newRowsPerPage) => {
         const rowCount = paginationTotalRows || tableRows.length;
         const updatedPage = getNumberOfPages(rowCount, newRowsPerPage);
@@ -1880,7 +1882,18 @@ function DataTable(props) {
                             selectableRows &&
                                 (showSelectAll ? (React__namespace.createElement(CellBase, { style: { flex: '0 0 48px' } })) : (React__namespace.createElement(ColumnCheckbox, { allSelected: allSelected, selectedRows: selectedRows, selectableRowsComponent: selectableRowsComponent, selectableRowsComponentProps: selectableRowsComponentProps, selectableRowDisabled: selectableRowDisabled, rowData: visibleRows, keyField: keyField, mergeSelections: mergeSelections, onSelectAllRows: handleSelectAllRows }))),
                             expandableRows && !expandableRowsHideExpander && React__namespace.createElement(ColumnExpander, null),
-                            tableColumns.map(column => (React__namespace.createElement(Column, { key: column.id, column: column, selectedColumn: selectedColumn, disabled: progressPending || sortedData.length === 0, pagination: pagination, paginationServer: paginationServer, persistSelectedOnSort: persistSelectedOnSort, selectableRowsVisibleOnly: selectableRowsVisibleOnly, sortDirection: sortDirection, sortIcon: sortIcon, sortServer: sortServer, onSort: handleSort, onDragStart: handleDragStart, onDragOver: handleDragOver, onDragEnd: handleDragEnd, onDragEnter: handleDragEnter, onDragLeave: handleDragLeave, draggingColumnId: draggingColumnId })))))),
+                            tableColumns.map(column => (React__namespace.createElement(Column, { key: column.id, column: column, selectedColumn: selectedColumn, disabled: progressPending || sortedData.length === 0, pagination: pagination, paginationServer: paginationServer, persistSelectedOnSort: persistSelectedOnSort, selectableRowsVisibleOnly: selectableRowsVisibleOnly, sortDirection: sortDirection, sortIcon: sortIcon, sortServer: sortServer, onDragStart: handleDragStart, onDragOver: handleDragOver, onDragEnd: handleDragEnd, onDragEnter: handleDragEnter, onDragLeave: handleDragLeave, draggingColumnId: draggingColumnId, onSort: action => {
+                                    var _a;
+                                    handleSort(action);
+                                    if (typeof props.onValuesChange === 'function') {
+                                        props.onValuesChange({
+                                            page: currentPage,
+                                            perPage: rowsPerPage,
+                                            orderingDirection: action.sortDirection,
+                                            orderingFieldId: (_a = action.selectedColumn) === null || _a === void 0 ? void 0 : _a.id,
+                                        });
+                                    }
+                                } })))))),
                     !sortedData.length && !progressPending && React__namespace.createElement(NoDataWrapper, null, noDataComponent),
                     progressPending && persistTableHead && React__namespace.createElement(ProgressWrapper, null, progressComponent),
                     !progressPending && sortedData.length > 0 && (React__namespace.createElement(Body, { className: "rdt_TableBody", role: "rowgroup" }, tableRows.map((row, i) => {
@@ -1892,7 +1905,30 @@ function DataTable(props) {
                         return (React__namespace.createElement(Row, { id: id, key: id, keyField: keyField, "data-row-id": id, columns: tableColumns, row: row, rowCount: sortedData.length, rowIndex: i, selectableRows: selectableRows, expandableRows: expandableRows, expandableIcon: expandableIcon, highlightOnHover: highlightOnHover, pointerOnHover: pointerOnHover, dense: dense, expandOnRowClicked: expandOnRowClicked, expandOnRowDoubleClicked: expandOnRowDoubleClicked, expandableRowsComponent: expandableRowsComponent, expandableRowsComponentProps: expandableRowsComponentProps, expandableRowsHideExpander: expandableRowsHideExpander, defaultExpanderDisabled: expanderDisabled, defaultExpanded: expanderExpander, expandableInheritConditionalStyles: expandableInheritConditionalStyles, conditionalRowStyles: conditionalRowStyles, selected: selected, selectableRowsHighlight: selectableRowsHighlight, selectableRowsComponent: selectableRowsComponent, selectableRowsComponentProps: selectableRowsComponentProps, selectableRowDisabled: selectableRowDisabled, selectableRowsSingle: selectableRowsSingle, striped: striped, onRowExpandToggled: onRowExpandToggled, onRowClicked: handleRowClicked, onRowDoubleClicked: handleRowDoubleClicked, onRowMouseEnter: handleRowMouseEnter, onRowMouseLeave: handleRowMouseLeave, onSelectedRow: handleSelectedRow, draggingColumnId: draggingColumnId, onDragStart: handleDragStart, onDragOver: handleDragOver, onDragEnd: handleDragEnd, onDragEnter: handleDragEnter, onDragLeave: handleDragLeave }));
                     })))))),
         enabledPagination && (React__namespace.createElement("div", null,
-            React__namespace.createElement(Pagination, { onChangePage: handleChangePage, onChangeRowsPerPage: handleChangeRowsPerPage, rowCount: paginationTotalRows || sortedData.length, currentPage: currentPage, rowsPerPage: rowsPerPage, direction: direction, paginationRowsPerPageOptions: paginationRowsPerPageOptions, paginationIconLastPage: paginationIconLastPage, paginationIconFirstPage: paginationIconFirstPage, paginationIconNext: paginationIconNext, paginationIconPrevious: paginationIconPrevious, paginationComponentOptions: paginationComponentOptions })))));
+            React__namespace.createElement(Pagination, { rowCount: paginationTotalRows || sortedData.length, currentPage: currentPage, rowsPerPage: rowsPerPage, direction: direction, paginationRowsPerPageOptions: paginationRowsPerPageOptions, paginationIconLastPage: paginationIconLastPage, paginationIconFirstPage: paginationIconFirstPage, paginationIconNext: paginationIconNext, paginationIconPrevious: paginationIconPrevious, paginationComponentOptions: paginationComponentOptions, onChangeRowsPerPage: newRowsPerPage => {
+                    handleChangeRowsPerPage(newRowsPerPage);
+                    const rowCount = paginationTotalRows || tableRows.length;
+                    const updatedPage = getNumberOfPages(rowCount, newRowsPerPage);
+                    const recalculatedPage = recalculatePage(currentPage, updatedPage);
+                    if (typeof props.onValuesChange === 'function') {
+                        props.onValuesChange({
+                            page: recalculatedPage,
+                            perPage: newRowsPerPage,
+                            orderingDirection: sortDirection,
+                            orderingFieldId: selectedColumn === null || selectedColumn === void 0 ? void 0 : selectedColumn.id,
+                        });
+                    }
+                }, onChangePage: page => {
+                    handleChangePage(page);
+                    if (typeof props.onValuesChange === 'function') {
+                        props.onValuesChange({
+                            page: page,
+                            perPage: rowsPerPage,
+                            orderingDirection: sortDirection,
+                            orderingFieldId: selectedColumn === null || selectedColumn === void 0 ? void 0 : selectedColumn.id,
+                        });
+                    }
+                } })))));
 }
 var DataTable$1 = React__namespace.memo(DataTable);
 

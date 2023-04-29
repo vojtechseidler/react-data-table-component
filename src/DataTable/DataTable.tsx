@@ -231,14 +231,15 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 	const handleRowMouseLeave = React.useCallback((row, e) => onRowMouseLeave(row, e), [onRowMouseLeave]);
 
 	const handleChangePage = React.useCallback(
-		(page: number) =>
+		(page: number) => {
 			dispatch({
 				type: 'CHANGE_PAGE',
 				page,
 				paginationServer,
 				visibleOnly: selectableRowsVisibleOnly,
 				persistSelectedOnPageChange,
-			}),
+			});
+		},
 		[paginationServer, persistSelectedOnPageChange, selectableRowsVisibleOnly],
 	);
 
@@ -421,13 +422,23 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 											sortDirection={sortDirection}
 											sortIcon={sortIcon}
 											sortServer={sortServer}
-											onSort={handleSort}
 											onDragStart={handleDragStart}
 											onDragOver={handleDragOver}
 											onDragEnd={handleDragEnd}
 											onDragEnter={handleDragEnter}
 											onDragLeave={handleDragLeave}
 											draggingColumnId={draggingColumnId}
+											onSort={action => {
+												handleSort(action);
+												if (typeof props.onValuesChange === 'function') {
+													props.onValuesChange({
+														page: currentPage,
+														perPage: rowsPerPage,
+														orderingDirection: action.sortDirection,
+														orderingFieldId: action.selectedColumn?.id as string,
+													});
+												}
+											}}
 										/>
 									))}
 								</HeadRow>
@@ -503,8 +514,6 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 			{enabledPagination && (
 				<div>
 					<Pagination
-						onChangePage={handleChangePage}
-						onChangeRowsPerPage={handleChangeRowsPerPage}
 						rowCount={paginationTotalRows || sortedData.length}
 						currentPage={currentPage}
 						rowsPerPage={rowsPerPage}
@@ -515,6 +524,31 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 						paginationIconNext={paginationIconNext}
 						paginationIconPrevious={paginationIconPrevious}
 						paginationComponentOptions={paginationComponentOptions}
+						onChangeRowsPerPage={newRowsPerPage => {
+							handleChangeRowsPerPage(newRowsPerPage);
+							const rowCount = paginationTotalRows || tableRows.length;
+							const updatedPage = getNumberOfPages(rowCount, newRowsPerPage);
+							const recalculatedPage = recalculatePage(currentPage, updatedPage);
+							if (typeof props.onValuesChange === 'function') {
+								props.onValuesChange({
+									page: recalculatedPage,
+									perPage: newRowsPerPage,
+									orderingDirection: sortDirection,
+									orderingFieldId: selectedColumn?.id as string,
+								});
+							}
+						}}
+						onChangePage={page => {
+							handleChangePage(page);
+							if (typeof props.onValuesChange === 'function') {
+								props.onValuesChange({
+									page: page,
+									perPage: rowsPerPage,
+									orderingDirection: sortDirection,
+									orderingFieldId: selectedColumn?.id as string,
+								});
+							}
+						}}
 					/>
 				</div>
 			)}

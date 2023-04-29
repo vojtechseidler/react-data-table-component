@@ -1,6 +1,7 @@
 /// <reference types="react" />
 import { Alignment, Direction, Media } from './constants';
 import { CSSObject } from 'styled-components';
+import { SortDirection } from "@material-ui/core";
 export declare enum SortOrder {
     ASC = "asc",
     DESC = "desc"
@@ -28,6 +29,12 @@ export declare type PaginationComponentProps = {
     onChangeRowsPerPage: PaginationChangeRowsPerPage;
 };
 export declare type PaginationComponent = React.ComponentType<PaginationComponentProps>;
+export declare type ValuesChange = {
+    page: number;
+    perPage: number;
+    orderingFieldId?: string;
+    orderingDirection: SortDirection;
+};
 export declare type TableProps<T> = {
     actions?: React.ReactNode | React.ReactNode[];
     className?: string;
@@ -115,6 +122,7 @@ export declare type TableProps<T> = {
     subHeaderWrap?: boolean;
     theme?: Themes;
     title?: string | React.ReactNode;
+    onValuesChange?: (values: ValuesChange) => void;
 };
 export declare type TableColumnBase = {
     allowOverflow?: boolean;
