@@ -1887,7 +1887,7 @@ function DataTable(props) {
                                     handleSort(action);
                                     if (typeof props.onValuesChange === 'function') {
                                         props.onValuesChange({
-                                            page: currentPage,
+                                            page: 1,
                                             perPage: rowsPerPage,
                                             orderingDirection: action.sortDirection,
                                             orderingFieldId: (_a = action.selectedColumn) === null || _a === void 0 ? void 0 : _a.id,

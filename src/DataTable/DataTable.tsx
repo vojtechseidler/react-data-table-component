@@ -432,7 +432,7 @@ function DataTable<T>(props: TableProps<T>): JSX.Element {
 												handleSort(action);
 												if (typeof props.onValuesChange === 'function') {
 													props.onValuesChange({
-														page: currentPage,
+														page: 1,
 														perPage: rowsPerPage,
 														orderingDirection: action.sortDirection,
 														orderingFieldId: action.selectedColumn?.id as string,
